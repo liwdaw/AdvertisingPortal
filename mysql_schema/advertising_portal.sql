@@ -20,7 +20,7 @@ CREATE TABLE `advertisement` (
 	`description` TEXT(1000) NOT NULL,
 	`price` int NOT NULL,
 	`status` varchar(20) NOT NULL,
-	`addition_date` DATETIME NOT NULL,
+	`add_date` DATETIME NOT NULL,
 	`refresh_date` DATETIME NOT NULL,
 	`user_id` int NOT NULL,
 	`sub_category_id` int NOT NULL,
