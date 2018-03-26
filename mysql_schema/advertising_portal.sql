@@ -23,7 +23,7 @@ CREATE TABLE `advertisement` (
 	`addition_date` DATETIME NOT NULL,
 	`refresh_date` DATETIME NOT NULL,
 	`user_id` int NOT NULL,
-	`sub_sub_category_id` int NOT NULL,
+	`sub_category_id` int NOT NULL,
 	PRIMARY KEY (`advertisement_id`)
 );
 
@@ -48,20 +48,11 @@ CREATE TABLE `sub_category` (
 	PRIMARY KEY (`sub_category_id`)
 );
 
-CREATE TABLE `sub_sub_category` (
-	`sub_sub_category_id` int NOT NULL,
-	`name` varchar(50) NOT NULL,
-	`sub_category_id` int NOT NULL,
-	PRIMARY KEY (`sub_sub_category_id`)
-);
-
 ALTER TABLE `advertisement` ADD CONSTRAINT `advertisement_fk0` FOREIGN KEY (`user_id`) REFERENCES `user`(`user_id`);
 
-ALTER TABLE `advertisement` ADD CONSTRAINT `advertisement_fk1` FOREIGN KEY (`sub_sub_category_id`) REFERENCES `sub_sub_category`(`sub_sub_category_id`);
+ALTER TABLE `advertisement` ADD CONSTRAINT `advertisement_fk1` FOREIGN KEY (`sub_category_id`) REFERENCES `sub_category`(`sub_category_id`);
 
 ALTER TABLE `image` ADD CONSTRAINT `image_fk0` FOREIGN KEY (`advertisement_id`) REFERENCES `advertisement`(`advertisement_id`);
 
 ALTER TABLE `sub_category` ADD CONSTRAINT `sub_category_fk0` FOREIGN KEY (`category_id`) REFERENCES `category`(`category_id`);
-
-ALTER TABLE `sub_sub_category` ADD CONSTRAINT `sub_sub_category_fk0` FOREIGN KEY (`sub_category_id`) REFERENCES `sub_category`(`sub_category_id`);
 
