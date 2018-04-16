@@ -14,7 +14,7 @@ import com.liwdaw.AdvertisingPortal.repository.CategoryRepository;
 public class CategoryService {
 
     @Autowired
-    CategoryRepository categoryRepository;
+    private CategoryRepository categoryRepository;
     
     public List<Category> getAllCategories() {
         return categoryRepository.findAll();
