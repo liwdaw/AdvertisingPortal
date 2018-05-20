@@ -1,7 +1,5 @@
 package com.liwdaw.AdvertisingPortal.DTO;
 
-import java.sql.Blob;
-
 import com.liwdaw.AdvertisingPortal.entity.Category;
 
 import lombok.Data;

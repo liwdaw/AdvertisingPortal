@@ -48,4 +48,5 @@ public class Advertisement {
     @ManyToOne
     @JoinColumn(name="category_id")
     private Category category;
+    
 }
