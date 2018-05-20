@@ -19,7 +19,7 @@ public class SubCategory {
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
     @Column(name="sub_category_id")
-    private int subCategoryID;
+    private int id;
     
     @Column(name="name")
     private String name;

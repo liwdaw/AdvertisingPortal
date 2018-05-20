@@ -24,9 +24,13 @@ public class CategoryService {
         return categories;
     }
     
-    public CategoryDTO getCategory(int id) {
-        CategoryDTO category = new CategoryDTO(categoryRepository.findById(id).get());
+    public CategoryDTO getCategoryById(int id) {
+        CategoryDTO category = new CategoryDTO(categoryRepository.findById(id));
         return category;
     }
     
+    public CategoryDTO getCategoryByName(String name) {
+        CategoryDTO category = new CategoryDTO(categoryRepository.findByName(name));
+        return category;
+    }
 }

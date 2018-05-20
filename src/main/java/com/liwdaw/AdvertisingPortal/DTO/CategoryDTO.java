@@ -9,13 +9,13 @@ import lombok.Data;
 @Data
 public class CategoryDTO {
 
-    private int categoryID;
+    private int id;
     
     private String name;
     
     public CategoryDTO(Category category) {
-        this.categoryID = category.getCategoryID();
-        this.name = category.getName();
+        id = category.getId();
+        name = category.getName();
     }
     
 }

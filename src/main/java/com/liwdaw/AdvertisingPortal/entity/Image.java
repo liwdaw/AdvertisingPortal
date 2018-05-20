@@ -22,7 +22,7 @@ public class Image {
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
     @Column(name="image_id")
-    private int imageID;
+    private int id;
     
     @Lob
     @Column(name="image")
