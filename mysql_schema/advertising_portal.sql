@@ -35,13 +35,13 @@ CREATE TABLE `image` (
 );
 
 CREATE TABLE `category` (
-	`category_id` int NOT NULL,
+	`category_id` int NOT NULL AUTO_INCREMENT,
 	`name` varchar(50) NOT NULL,
 	PRIMARY KEY (`category_id`)
 );
 
 CREATE TABLE `sub_category` (
-	`sub_category_id` int NOT NULL,
+	`sub_category_id` int NOT NULL AUTO_INCREMENT,
 	`name` varchar(50) NOT NULL,
 	`category_id` int NOT NULL,
 	PRIMARY KEY (`sub_category_id`)
@@ -55,3 +55,4 @@ ALTER TABLE `image` ADD CONSTRAINT `image_fk0` FOREIGN KEY (`advertisement_id`) 
 
 ALTER TABLE `sub_category` ADD CONSTRAINT `sub_category_fk0` FOREIGN KEY (`category_id`) REFERENCES `category`(`category_id`);
 
+INSERT INTO category (name) VALUES ("Electronics");
