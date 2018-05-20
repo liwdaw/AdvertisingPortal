@@ -16,21 +16,22 @@ import com.liwdaw.AdvertisingPortal.repository.CategoryRepository;
 public class CategoryService {
 
     @Autowired
-    private CategoryRepository categoryRepository;
+    private CategoryRepository repository;
     
     public List<CategoryDTO> getAllCategories() {
         List<CategoryDTO> categories = new ArrayList<>();
-        categoryRepository.findAll().forEach(e->categories.add(new CategoryDTO(e)));
+        repository.findAll().forEach(e->categories.add(new CategoryDTO(e)));
         return categories;
     }
     
     public CategoryDTO getCategoryById(int id) {
-        CategoryDTO category = new CategoryDTO(categoryRepository.findById(id));
+        CategoryDTO category = new CategoryDTO(repository.findById(id));
         return category;
     }
     
     public CategoryDTO getCategoryByName(String name) {
-        CategoryDTO category = new CategoryDTO(categoryRepository.findByName(name));
+        CategoryDTO category = new CategoryDTO(repository.findByName(name));
         return category;
     }
+    
 }

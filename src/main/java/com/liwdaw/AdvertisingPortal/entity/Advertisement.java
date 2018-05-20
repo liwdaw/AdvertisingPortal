@@ -23,7 +23,7 @@ public class Advertisement {
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
     @Column(name="advertisement_id")
-    private int advertisementID;
+    private int id;
     
     @Column(name="title")
     private String title;
