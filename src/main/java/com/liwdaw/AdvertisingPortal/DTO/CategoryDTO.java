@@ -13,12 +13,9 @@ public class CategoryDTO {
     
     private String name;
     
-    private Blob icon;
-    
     public CategoryDTO(Category category) {
         this.categoryID = category.getCategoryID();
         this.name = category.getName();
-        this.icon = category.getIcon();
     }
     
 }

@@ -37,7 +37,6 @@ CREATE TABLE `image` (
 CREATE TABLE `category` (
 	`category_id` int NOT NULL,
 	`name` varchar(50) NOT NULL,
-	`icon` blob(1024) NOT NULL,
 	PRIMARY KEY (`category_id`)
 );
 

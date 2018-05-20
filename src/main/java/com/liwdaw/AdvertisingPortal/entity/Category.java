@@ -25,8 +25,4 @@ public class Category {
     @Column(name="name")
     private String name;
     
-    @Lob
-    @Column(name="icon")
-    private Blob icon;
-    
 }
