@@ -38,5 +38,11 @@ public class SubCategoryService {
         repository.findByCategoryName(name).forEach(e->subCategories.add(new SubCategoryDTO(e)));
         return subCategories;
     }
+    
+    public List<SubCategoryDTO> getAllSubCategories() {
+        List<SubCategoryDTO> subCategories = new ArrayList<>();
+        repository.findAll().forEach(e->subCategories.add(new SubCategoryDTO(e)));
+        return subCategories;
+    }
 	
 }

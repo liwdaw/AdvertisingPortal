@@ -20,12 +20,6 @@ public class CategoryController {
     @Autowired
     private CategoryService service;
     
-    @GetMapping("all")
-    public ResponseEntity<List<CategoryDTO>> getAllCategories() {
-        List<CategoryDTO> categories = service.getAllCategories();
-        return new ResponseEntity<List<CategoryDTO>>(categories, HttpStatus.OK);
-    }
-    
     @GetMapping("id={id}")
     public ResponseEntity<CategoryDTO> getCategoryById(@PathVariable("id") Integer id) {
         CategoryDTO category = service.getCategoryById(id);
@@ -36,6 +30,12 @@ public class CategoryController {
     public ResponseEntity<CategoryDTO> getCategoryByName(@PathVariable("name") String name) {
         CategoryDTO category = service.getCategoryByName(name);
         return new ResponseEntity<CategoryDTO>(category, HttpStatus.OK);
+    }
+    
+    @GetMapping("all")
+    public ResponseEntity<List<CategoryDTO>> getAllCategories() {
+        List<CategoryDTO> categories = service.getAllCategories();
+        return new ResponseEntity<List<CategoryDTO>>(categories, HttpStatus.OK);
     }
     
 }

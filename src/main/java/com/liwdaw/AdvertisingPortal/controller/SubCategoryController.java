@@ -1,5 +1,7 @@
 package com.liwdaw.AdvertisingPortal.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,16 +32,22 @@ public class SubCategoryController {
         return new ResponseEntity<SubCategoryDTO>(subCategory, HttpStatus.OK);
     }
     
-    @GetMapping("category/id={id}")
-    public ResponseEntity<SubCategoryDTO> getSubCategoryByCategoryId(@PathVariable("id") Integer id) {
-        SubCategoryDTO subCategory = service.getSubCategoryById(id);
-        return new ResponseEntity<SubCategoryDTO>(subCategory, HttpStatus.OK);
+    @GetMapping("category/name={name}")
+    public ResponseEntity<List<SubCategoryDTO>> getSubCategoriesByCategoryName(@PathVariable("name") String name) {
+        List<SubCategoryDTO> subCategories = service.getSubCategoriesByCategoryName(name);
+        return new ResponseEntity<List<SubCategoryDTO>>(subCategories, HttpStatus.OK);
     }
     
-    @GetMapping("category/name={name}")
-    public ResponseEntity<SubCategoryDTO> getSubCategoryByCategoryName(@PathVariable("name") String name) {
-        SubCategoryDTO subCategory = service.getSubCategoryByName(name);
-        return new ResponseEntity<SubCategoryDTO>(subCategory, HttpStatus.OK);
+    @GetMapping("category/id={id}")
+    public ResponseEntity<List<SubCategoryDTO>> getSubCategoriesByCategoryId(@PathVariable("id") Integer id) {
+        List<SubCategoryDTO> subCategories = service.getSubCategoriesByCategoryId(id);
+        return new ResponseEntity<List<SubCategoryDTO>>(subCategories, HttpStatus.OK);
+    }
+    
+    @GetMapping("all")
+    public ResponseEntity<List<SubCategoryDTO>> getAllSubCategories() {
+        List<SubCategoryDTO> subCategories = service.getAllSubCategories();
+        return new ResponseEntity<List<SubCategoryDTO>>(subCategories, HttpStatus.OK);
     }
     
 }
