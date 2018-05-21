@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.liwdaw.AdvertisingPortal.DTO.CategoryDTO;
-import com.liwdaw.AdvertisingPortal.entity.Category;
 import com.liwdaw.AdvertisingPortal.repository.CategoryRepository;
 
 @Transactional
@@ -18,12 +17,6 @@ public class CategoryService {
     @Autowired
     private CategoryRepository repository;
     
-    public List<CategoryDTO> getAllCategories() {
-        List<CategoryDTO> categories = new ArrayList<>();
-        repository.findAll().forEach(e->categories.add(new CategoryDTO(e)));
-        return categories;
-    }
-    
     public CategoryDTO getCategoryById(int id) {
         CategoryDTO category = new CategoryDTO(repository.findById(id));
         return category;
@@ -32,6 +25,12 @@ public class CategoryService {
     public CategoryDTO getCategoryByName(String name) {
         CategoryDTO category = new CategoryDTO(repository.findByName(name));
         return category;
+    }
+    
+    public List<CategoryDTO> getAllCategories() {
+        List<CategoryDTO> categories = new ArrayList<>();
+        repository.findAll().forEach(e->categories.add(new CategoryDTO(e)));
+        return categories;
     }
     
 }
