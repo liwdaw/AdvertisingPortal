@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.liwdaw.AdvertisingPortal.DTO.SubCategoryDTO;
+import com.liwdaw.AdvertisingPortal.dto.SubCategoryDTO;
 import com.liwdaw.AdvertisingPortal.service.SubCategoryService;
 
 @Controller

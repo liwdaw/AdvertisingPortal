@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.liwdaw.AdvertisingPortal.DTO.SubCategoryDTO;
+import com.liwdaw.AdvertisingPortal.dto.SubCategoryDTO;
 import com.liwdaw.AdvertisingPortal.repository.SubCategoryRepository;
 
 @Transactional

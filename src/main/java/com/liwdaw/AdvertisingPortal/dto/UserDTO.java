@@ -1,4 +1,4 @@
-package com.liwdaw.AdvertisingPortal.DTO;
+package com.liwdaw.AdvertisingPortal.dto;
 
 import com.liwdaw.AdvertisingPortal.entity.User;
 
