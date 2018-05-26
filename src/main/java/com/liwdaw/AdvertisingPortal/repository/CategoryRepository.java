@@ -8,6 +8,6 @@ public interface CategoryRepository extends JpaRepository<Category, Integer> {
     
     public Category findById(int id);
     
-    public Category findByName(String name);
+    public Category findByNameIgnoreCase(String name);
       
 }

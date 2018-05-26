@@ -23,7 +23,7 @@ public class SubCategoryService {
     }
     
     public SubCategoryDTO getSubCategoryByName(String name) {
-        SubCategoryDTO subCategory = new SubCategoryDTO(repository.findByName(name));
+        SubCategoryDTO subCategory = new SubCategoryDTO(repository.findByNameIgnoreCase(name));
         return subCategory;
     }
     
@@ -35,7 +35,7 @@ public class SubCategoryService {
     
     public List<SubCategoryDTO> getSubCategoriesByCategoryName(String name) {
         List<SubCategoryDTO> subCategories = new ArrayList<>();
-        repository.findByCategoryName(name).forEach(e->subCategories.add(new SubCategoryDTO(e)));
+        repository.findByCategoryNameIgnoreCase(name).forEach(e->subCategories.add(new SubCategoryDTO(e)));
         return subCategories;
     }
     

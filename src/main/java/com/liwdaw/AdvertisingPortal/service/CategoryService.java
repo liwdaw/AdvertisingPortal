@@ -23,7 +23,7 @@ public class CategoryService {
     }
     
     public CategoryDTO getCategoryByName(String name) {
-        CategoryDTO category = new CategoryDTO(repository.findByName(name));
+        CategoryDTO category = new CategoryDTO(repository.findByNameIgnoreCase(name));
         return category;
     }
     
