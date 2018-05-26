@@ -29,6 +29,7 @@ public class UserController {
         return new ResponseEntity<UserDTO>(user, HttpStatus.OK);
     }
     
+    // remember to add security
     @GetMapping("email={email}&password={password}")
     public ResponseEntity<UserDTO> getUserByEmailAndPassword(@PathVariable("email") String email, @PathVariable("password") String password) {
         UserDTO user = service.getUserByEmailAndPassword(email, password);
@@ -41,6 +42,7 @@ public class UserController {
         return new ResponseEntity<List<UserDTO>>(users, HttpStatus.OK);
     }
     
+    // remember to modify this - should return conflict, validate data and maybe some wrapper?
     @PostMapping
     public ResponseEntity<Void> addUser(@RequestBody User user) {
         service.addUser(user);
