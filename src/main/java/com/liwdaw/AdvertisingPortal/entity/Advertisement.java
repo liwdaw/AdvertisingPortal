@@ -13,6 +13,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.liwdaw.AdvertisingPortal.request.AdvertisementRequest;
+
 import lombok.Data;
 
 @Data

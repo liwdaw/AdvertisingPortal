@@ -36,7 +36,14 @@ public class UserService {
     }
     
     public void addUser(UserRequest userRequest) {
-        User user = new User(userRequest);
+        User user = new User();
+        user.setEmail(userRequest.getEmail());
+        user.setPassword(userRequest.getPassword());
+        user.setName(userRequest.getName());
+        user.setCity(userRequest.getCity());
+        user.setPhoneNumber(userRequest.getPhoneNumber());
+        user.setRole("ROLE_USER");
+        user.setEnabled(true);
         repository.save(user);
     }
     

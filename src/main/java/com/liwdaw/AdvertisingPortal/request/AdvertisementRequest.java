@@ -1,6 +1,6 @@
 package com.liwdaw.AdvertisingPortal.request;
 
-import java.util.Date;
+import java.util.List;
 
 import lombok.Data;
 
@@ -12,6 +12,8 @@ public class AdvertisementRequest {
     private String description;
     
     private int price;
+    
+    private List<ImageRequest> imageRequests;
     
     private int userId;
     
