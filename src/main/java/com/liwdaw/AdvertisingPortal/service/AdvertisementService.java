@@ -32,14 +32,16 @@ public class AdvertisementService {
     @Autowired
     private UserRepository userRepository;
 
-    public AdvertisementDTO getAdvertisementByIdAndStatus(int id, String status) {
+    public AdvertisementDTO getAdvertisementById(int id) {
+        String status = "CONFIRMED";
         Advertisement advertisement = advertisementRepository.findByIdAndStatus(id, status);
         List<Image> images = imageRepository.findByAdvertisementId(advertisement.getId());
         AdvertisementDTO advertisementDTO = new AdvertisementDTO(advertisement, images);
         return advertisementDTO;
     }
 
-    public List<AdvertisementDTO> getAdvertisementByUserIdAndStatus(int userId, String status) {
+    public List<AdvertisementDTO> getAdvertisementsByUserId(int userId) {
+        String status = "CONFIRMED";
         List<AdvertisementDTO> advertisementsDTO = new ArrayList<>();
         List<Advertisement> advertisements = advertisementRepository.findByUserIdAndStatus(userId, status);
         advertisements.forEach(e -> {
@@ -49,7 +51,8 @@ public class AdvertisementService {
         return advertisementsDTO;
     }
     
-    public List<AdvertisementDTO> getAdvertisementBySubCategoryIdAndStatus(int subCategoryId, String status) {
+    public List<AdvertisementDTO> getAdvertisementsBySubCategoryId(int subCategoryId) {
+        String status = "CONFIRMED";
         List<AdvertisementDTO> advertisementsDTO = new ArrayList<>();
         List<Advertisement> advertisements = advertisementRepository.findBySubCategoryIdAndStatus(subCategoryId, status);
         advertisements.forEach(e -> {
@@ -59,9 +62,21 @@ public class AdvertisementService {
         return advertisementsDTO;
     }
     
-    public List<AdvertisementDTO> getAdvertisementByCategoryIdAndStatus(int categoryId, String status) {
+    public List<AdvertisementDTO> getAdvertisementsByCategoryId(int categoryId) {
+        String status = "CONFIRMED";
         List<AdvertisementDTO> advertisementsDTO = new ArrayList<>();
         List<Advertisement> advertisements = advertisementRepository.findBySubCategoryCategoryIdAndStatus(categoryId, status);
+        advertisements.forEach(e -> {
+            List<Image> images = imageRepository.findByAdvertisementId(e.getId());
+            advertisementsDTO.add(new AdvertisementDTO(e, images));
+        });
+        return advertisementsDTO;
+    }
+    
+    public List<AdvertisementDTO> getNewAdvertisements() {
+        String status = "NEW";
+        List<AdvertisementDTO> advertisementsDTO = new ArrayList<>();
+        List<Advertisement> advertisements = advertisementRepository.findByStatus(status);
         advertisements.forEach(e -> {
             List<Image> images = imageRepository.findByAdvertisementId(e.getId());
             advertisementsDTO.add(new AdvertisementDTO(e, images));

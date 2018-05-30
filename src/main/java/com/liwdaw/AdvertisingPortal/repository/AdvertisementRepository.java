@@ -16,4 +16,5 @@ public interface AdvertisementRepository extends JpaRepository<Advertisement, In
     
     public List<Advertisement> findBySubCategoryCategoryIdAndStatus(int id, String status);
     
+    public List<Advertisement> findByStatus(String status);
 }
