@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.liwdaw.AdvertisingPortal.dto.UserDTO;
-import com.liwdaw.AdvertisingPortal.entity.User;
 import com.liwdaw.AdvertisingPortal.request.UserRequest;
 import com.liwdaw.AdvertisingPortal.service.UserService;
 
@@ -44,7 +43,7 @@ public class UserController {
     }
     
     // remember to modify this - should return conflict, validate data and maybe some wrapper?
-    @PostMapping
+    @PostMapping("/add")
     public ResponseEntity<Void> addUser(@RequestBody UserRequest userRequest) {
         service.addUser(userRequest);
         return new ResponseEntity<Void>(HttpStatus.CREATED);
