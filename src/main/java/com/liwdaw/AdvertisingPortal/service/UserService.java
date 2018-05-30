@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.liwdaw.AdvertisingPortal.dto.UserDTO;
 import com.liwdaw.AdvertisingPortal.entity.User;
 import com.liwdaw.AdvertisingPortal.repository.UserRepository;
+import com.liwdaw.AdvertisingPortal.request.UserRequest;
 
 @Transactional
 @Service
@@ -34,7 +35,8 @@ public class UserService {
         return users;
     }
     
-    public void addUser(User user) {
+    public void addUser(UserRequest userRequest) {
+        User user = new User(userRequest);
         repository.save(user);
     }
     

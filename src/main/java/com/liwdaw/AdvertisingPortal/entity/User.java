@@ -7,6 +7,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.liwdaw.AdvertisingPortal.request.UserRequest;
+
 import lombok.Data;
 
 @Data
@@ -39,5 +41,15 @@ public class User {
     
     @Column(name="enabled")
     private boolean enabled;
+    
+    public User(UserRequest userRequest) {
+        email = userRequest.getEmail();
+        password = userRequest.getPassword();
+        name = userRequest.getName();
+        city = userRequest.getCity();
+        phoneNumber = userRequest.getPhoneNumber();
+        role = "ROLE_USER";
+        enabled = true;
+    }
     
 }
