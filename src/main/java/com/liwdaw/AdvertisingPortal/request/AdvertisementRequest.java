@@ -17,4 +17,6 @@ public class AdvertisementRequest {
     
     private int userId;
     
+    private int subCategoryId;
+    
 }

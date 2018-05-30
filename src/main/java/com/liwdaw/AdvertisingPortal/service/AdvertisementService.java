@@ -12,6 +12,8 @@ import com.liwdaw.AdvertisingPortal.entity.Advertisement;
 import com.liwdaw.AdvertisingPortal.entity.Image;
 import com.liwdaw.AdvertisingPortal.repository.AdvertisementRepository;
 import com.liwdaw.AdvertisingPortal.repository.ImageRepository;
+import com.liwdaw.AdvertisingPortal.repository.SubCategoryRepository;
+import com.liwdaw.AdvertisingPortal.repository.UserRepository;
 import com.liwdaw.AdvertisingPortal.request.AdvertisementRequest;
 
 @Transactional
@@ -23,6 +25,12 @@ public class AdvertisementService {
 
     @Autowired
     private ImageRepository imageRepository;
+    
+    @Autowired
+    private SubCategoryRepository subCategoryRepository;
+    
+    @Autowired
+    private UserRepository userRepository;
 
     public AdvertisementDTO getAdvertisementByIdAndStatus(int id, String status) {
         Advertisement advertisement = advertisementRepository.findByIdAndStatus(id, status);
@@ -67,6 +75,8 @@ public class AdvertisementService {
         advertisement.setDescription(advertisementRequest.getDescription());
         advertisement.setPrice(advertisementRequest.getPrice());
         advertisement.setStatus("NEW");
+        advertisement.setSubCategory(subCategoryRepository.findById(advertisementRequest.getSubCategoryId()));
+        advertisement.setUser(userRepository.findById(advertisementRequest.getUserId()));
         advertisement = advertisementRepository.save(advertisement);
         advertisementRequest.getImageRequests().forEach(e -> {
             Image image = new Image();
