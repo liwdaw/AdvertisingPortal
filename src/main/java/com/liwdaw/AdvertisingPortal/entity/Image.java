@@ -24,9 +24,8 @@ public class Image {
     @Column(name="image_id")
     private int id;
     
-    @Lob
-    @Column(name="image")
-    private Blob image;
+    @Column(name="path")
+    private String path;
     
     @ManyToOne
     @JoinColumn(name="advertisement_id")

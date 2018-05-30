@@ -80,7 +80,7 @@ public class AdvertisementService {
         advertisement = advertisementRepository.save(advertisement);
         advertisementRequest.getImageRequests().forEach(e -> {
             Image image = new Image();
-            image.setImage(e.getBlob());
+            image.setPath(e.getPath());
             imageRepository.save(image);
         });
     }

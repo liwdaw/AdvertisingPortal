@@ -11,11 +11,11 @@ public class ImageDTO {
 
     private int id;
     
-    private Blob image;
+    private String path;
     
     public ImageDTO(Image image) {
         id = image.getId();
-        this.image = image.getImage();
+        path = image.getPath();
     }
     
 }
