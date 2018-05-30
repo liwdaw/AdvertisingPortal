@@ -1,25 +1,40 @@
 package com.liwdaw.AdvertisingPortal.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-
-import com.liwdaw.AdvertisingPortal.entity.User;
 
 @Component
 @EnableWebSecurity
 public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter{
 
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+    
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+    
     private static final String[] AUTH_WHITELIST = {
             "/swagger-resources/**",
             "/swagger-ui.html",
             "/v2/api-docs",
             "/webjars/**",
-            "/user/add",
+            "/user/register",
+            "/user/login/",
+            "/user/name*",
+            "/user/id*",
+            "/ad/ad_id*",
+            "/ad/subcategory_id*",
+            "/ad/category_id*",
+            "/ad/user_id*"
     };
     
     @Autowired
@@ -27,7 +42,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter{
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(detailsService).passwordEncoder(User.PASSWORD_ENCODER);
+        auth.userDetailsService(detailsService).passwordEncoder(passwordEncoder);
     }
 
     @Override
@@ -41,8 +56,4 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter{
                 .csrf().disable();
     }
     
-    @Override
-    public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/v2/api-docs", "/configuration/ui", "/swagger-resources", "/configuration/security", "/swagger-ui.html", "/webjars/**");
-    }
 }

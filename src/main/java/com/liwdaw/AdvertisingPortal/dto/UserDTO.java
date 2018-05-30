@@ -25,7 +25,7 @@ public class UserDTO {
 		name = user.getName();
 		city = user.getCity();
 		phoneNumber = user.getPhoneNumber();
-		role = user.getRole();
+		role = user.getRole().toString();
 	}
 	
 }

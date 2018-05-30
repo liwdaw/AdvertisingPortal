@@ -4,18 +4,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.liwdaw.AdvertisingPortal.dto.UserDTO;
 import com.liwdaw.AdvertisingPortal.entity.User;
+import com.liwdaw.AdvertisingPortal.model.UserRole;
 import com.liwdaw.AdvertisingPortal.repository.UserRepository;
 import com.liwdaw.AdvertisingPortal.request.UserRequest;
 
 @Transactional
 @Service
 public class UserService {
-
+    
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+    
     @Autowired
     private UserRepository repository;
     
@@ -25,8 +30,13 @@ public class UserService {
     }
     
     public UserDTO getUserByEmailAndPassword(String email, String password) {
-        UserDTO user = new UserDTO(repository.findByEmailAndPassword(email, password));
-        return user;
+        User user = repository.findByEmail(email);
+        if (passwordEncoder.matches(password, user.getPassword())) {
+            return new UserDTO(user);
+        }
+        else {
+            return null;
+        }
     }
     
     public List<UserDTO> getUsersByNameContaining(String name) {
@@ -38,11 +48,11 @@ public class UserService {
     public void addUser(UserRequest userRequest) {
         User user = new User();
         user.setEmail(userRequest.getEmail());
-        user.setPassword(userRequest.getPassword());
+        user.setPassword(passwordEncoder.encode(userRequest.getPassword()));
         user.setName(userRequest.getName());
         user.setCity(userRequest.getCity());
         user.setPhoneNumber(userRequest.getPhoneNumber());
-        user.setRole("ROLE_USER");
+        user.setRole(UserRole.USER);
         user.setEnabled(true);
         repository.save(user);
     }

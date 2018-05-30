@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.liwdaw.AdvertisingPortal.dto.UserDTO;
+import com.liwdaw.AdvertisingPortal.request.LoginRequest;
 import com.liwdaw.AdvertisingPortal.request.UserRequest;
 import com.liwdaw.AdvertisingPortal.service.UserService;
 
@@ -29,22 +30,20 @@ public class UserController {
         return new ResponseEntity<UserDTO>(user, HttpStatus.OK);
     }
     
-    // remember to add security
-    @GetMapping("/email={email}&password={password}")
-    public ResponseEntity<UserDTO> getUserByEmailAndPassword(@PathVariable("email") String email, @PathVariable("password") String password) {
-        UserDTO user = service.getUserByEmailAndPassword(email, password);
-        return new ResponseEntity<UserDTO>(user, HttpStatus.OK);
-    }
-    
     @GetMapping("/name={name}")
     public ResponseEntity<List<UserDTO>> getUsersByNameContaining(@PathVariable("name") String name) {
         List<UserDTO> users = service.getUsersByNameContaining(name);
         return new ResponseEntity<List<UserDTO>>(users, HttpStatus.OK);
     }
     
-    // remember to modify this - should return conflict, validate data and maybe some wrapper?
-    @PostMapping("/add")
-    public ResponseEntity<Void> addUser(@RequestBody UserRequest userRequest) {
+    @PostMapping("/login")
+    public ResponseEntity<UserDTO> loginUser(@RequestBody LoginRequest loginRequest) {
+        UserDTO user = service.getUserByEmailAndPassword(loginRequest.getEmail(), loginRequest.getPassword());
+        return new ResponseEntity<UserDTO>(user, HttpStatus.OK);
+    }
+    
+    @PostMapping("/register")
+    public ResponseEntity<Void> registerUser(@RequestBody UserRequest userRequest) {
         service.addUser(userRequest);
         return new ResponseEntity<Void>(HttpStatus.CREATED);
     }

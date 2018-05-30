@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.liwdaw.AdvertisingPortal.dto.AdvertisementDTO;
 import com.liwdaw.AdvertisingPortal.entity.Advertisement;
 import com.liwdaw.AdvertisingPortal.entity.Image;
+import com.liwdaw.AdvertisingPortal.model.AdvertisementStatus;
 import com.liwdaw.AdvertisingPortal.repository.AdvertisementRepository;
 import com.liwdaw.AdvertisingPortal.repository.ImageRepository;
 import com.liwdaw.AdvertisingPortal.repository.SubCategoryRepository;
@@ -33,17 +34,15 @@ public class AdvertisementService {
     private UserRepository userRepository;
 
     public AdvertisementDTO getAdvertisementById(int id) {
-        String status = "CONFIRMED";
-        Advertisement advertisement = advertisementRepository.findByIdAndStatus(id, status);
+        Advertisement advertisement = advertisementRepository.findByIdAndStatus(id, AdvertisementStatus.CONFIRMED);
         List<Image> images = imageRepository.findByAdvertisementId(advertisement.getId());
         AdvertisementDTO advertisementDTO = new AdvertisementDTO(advertisement, images);
         return advertisementDTO;
     }
 
     public List<AdvertisementDTO> getAdvertisementsByUserId(int userId) {
-        String status = "CONFIRMED";
         List<AdvertisementDTO> advertisementsDTO = new ArrayList<>();
-        List<Advertisement> advertisements = advertisementRepository.findByUserIdAndStatus(userId, status);
+        List<Advertisement> advertisements = advertisementRepository.findByUserIdAndStatus(userId, AdvertisementStatus.CONFIRMED);
         advertisements.forEach(e -> {
             List<Image> images = imageRepository.findByAdvertisementId(e.getId());
             advertisementsDTO.add(new AdvertisementDTO(e, images));
@@ -52,9 +51,8 @@ public class AdvertisementService {
     }
     
     public List<AdvertisementDTO> getAdvertisementsBySubCategoryId(int subCategoryId) {
-        String status = "CONFIRMED";
         List<AdvertisementDTO> advertisementsDTO = new ArrayList<>();
-        List<Advertisement> advertisements = advertisementRepository.findBySubCategoryIdAndStatus(subCategoryId, status);
+        List<Advertisement> advertisements = advertisementRepository.findBySubCategoryIdAndStatus(subCategoryId, AdvertisementStatus.CONFIRMED);
         advertisements.forEach(e -> {
             List<Image> images = imageRepository.findByAdvertisementId(e.getId());
             advertisementsDTO.add(new AdvertisementDTO(e, images));
@@ -63,9 +61,8 @@ public class AdvertisementService {
     }
     
     public List<AdvertisementDTO> getAdvertisementsByCategoryId(int categoryId) {
-        String status = "CONFIRMED";
         List<AdvertisementDTO> advertisementsDTO = new ArrayList<>();
-        List<Advertisement> advertisements = advertisementRepository.findBySubCategoryCategoryIdAndStatus(categoryId, status);
+        List<Advertisement> advertisements = advertisementRepository.findBySubCategoryCategoryIdAndStatus(categoryId, AdvertisementStatus.CONFIRMED);
         advertisements.forEach(e -> {
             List<Image> images = imageRepository.findByAdvertisementId(e.getId());
             advertisementsDTO.add(new AdvertisementDTO(e, images));
@@ -74,9 +71,8 @@ public class AdvertisementService {
     }
     
     public List<AdvertisementDTO> getNewAdvertisements() {
-        String status = "NEW";
         List<AdvertisementDTO> advertisementsDTO = new ArrayList<>();
-        List<Advertisement> advertisements = advertisementRepository.findByStatus(status);
+        List<Advertisement> advertisements = advertisementRepository.findByStatus(AdvertisementStatus.NEW);
         advertisements.forEach(e -> {
             List<Image> images = imageRepository.findByAdvertisementId(e.getId());
             advertisementsDTO.add(new AdvertisementDTO(e, images));
@@ -89,7 +85,7 @@ public class AdvertisementService {
         advertisement.setTitle(advertisementRequest.getTitle());
         advertisement.setDescription(advertisementRequest.getDescription());
         advertisement.setPrice(advertisementRequest.getPrice());
-        advertisement.setStatus("NEW");
+        advertisement.setStatus(AdvertisementStatus.NEW);
         advertisement.setSubCategory(subCategoryRepository.findById(advertisementRequest.getSubCategoryId()));
         advertisement.setUser(userRepository.findById(advertisementRequest.getUserId()));
         advertisement = advertisementRepository.save(advertisement);

@@ -30,25 +30,25 @@ public class AdvertisementController {
     }
     
     @GetMapping("/ad_id={id}")
-    public ResponseEntity<AdvertisementDTO> getAdvertisementById(@PathVariable Integer id) {
+    public ResponseEntity<AdvertisementDTO> getAdvertisementById(@PathVariable("id") Integer id) {
         AdvertisementDTO advertisementDTO = advertisementService.getAdvertisementById(id);
         return new ResponseEntity<AdvertisementDTO>(advertisementDTO, HttpStatus.OK);
     }
     
     @GetMapping("/subcategory_id={id}")
-    public ResponseEntity<List<AdvertisementDTO>> getAdvertisementsBySubCategoryId(@PathVariable Integer id) {
+    public ResponseEntity<List<AdvertisementDTO>> getAdvertisementsBySubCategoryId(@PathVariable("id") Integer id) {
         List<AdvertisementDTO> advertisementsDTO = advertisementService.getAdvertisementsBySubCategoryId(id);
         return new ResponseEntity<List<AdvertisementDTO>>(advertisementsDTO, HttpStatus.OK);
     }
     
     @GetMapping("/category_id={id}")
-    public ResponseEntity<List<AdvertisementDTO>> getAdvertisementsByCategoryId(@PathVariable Integer id) {
+    public ResponseEntity<List<AdvertisementDTO>> getAdvertisementsByCategoryId(@PathVariable("id") Integer id) {
         List<AdvertisementDTO> advertisementsDTO = advertisementService.getAdvertisementsByCategoryId(id);
         return new ResponseEntity<List<AdvertisementDTO>>(advertisementsDTO, HttpStatus.OK);
     }
     
     @GetMapping("/user_id={id}")
-    public ResponseEntity<List<AdvertisementDTO>> getAdvertisementsByUserId(@PathVariable Integer id) {
+    public ResponseEntity<List<AdvertisementDTO>> getAdvertisementsByUserId(@PathVariable("id") Integer id) {
         List<AdvertisementDTO> advertisementsDTO = advertisementService.getAdvertisementsByUserId(id);
         return new ResponseEntity<List<AdvertisementDTO>>(advertisementsDTO, HttpStatus.OK);
     }
@@ -57,9 +57,6 @@ public class AdvertisementController {
     public ResponseEntity<Void> addAdvertisement(@RequestBody AdvertisementRequest advertisementRequest) {
         advertisementService.addAdvertisement(advertisementRequest);
         return new ResponseEntity<Void>(HttpStatus.CREATED);
-    }
-    
-    
-    
+    }   
     
 }

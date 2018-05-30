@@ -4,6 +4,8 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -13,6 +15,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.liwdaw.AdvertisingPortal.model.AdvertisementStatus;
 import com.liwdaw.AdvertisingPortal.request.AdvertisementRequest;
 
 import lombok.Data;
@@ -37,7 +40,8 @@ public class Advertisement {
     private int price;
     
     @Column(name="status")
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private AdvertisementStatus status;
     
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name="add_date")
