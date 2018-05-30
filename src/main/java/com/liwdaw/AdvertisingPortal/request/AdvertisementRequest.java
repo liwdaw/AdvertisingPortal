@@ -13,7 +13,7 @@ public class AdvertisementRequest {
     
     private int price;
     
-    private List<ImageRequest> imageRequests;
+    private List<String> imagesPaths;
     
     private int userId;
     

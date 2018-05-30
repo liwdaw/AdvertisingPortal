@@ -78,9 +78,9 @@ public class AdvertisementService {
         advertisement.setSubCategory(subCategoryRepository.findById(advertisementRequest.getSubCategoryId()));
         advertisement.setUser(userRepository.findById(advertisementRequest.getUserId()));
         advertisement = advertisementRepository.save(advertisement);
-        advertisementRequest.getImageRequests().forEach(e -> {
+        advertisementRequest.getImagesPaths().forEach(e -> {
             Image image = new Image();
-            image.setPath(e.getPath());
+            image.setPath(e);
             imageRepository.save(image);
         });
     }
