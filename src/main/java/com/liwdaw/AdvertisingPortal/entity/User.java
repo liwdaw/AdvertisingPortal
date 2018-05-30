@@ -7,6 +7,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
 import com.liwdaw.AdvertisingPortal.request.UserRequest;
 
 import lombok.Data;
@@ -15,6 +18,8 @@ import lombok.Data;
 @Entity
 @Table(name="user")
 public class User {
+    
+    public static final PasswordEncoder PASSWORD_ENCODER = new BCryptPasswordEncoder();
     
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
@@ -41,5 +46,9 @@ public class User {
     
     @Column(name="enabled")
     private boolean enabled;
+    
+    public String getPassword() {
+        return PASSWORD_ENCODER.encode(password);
+    }
     
 }
