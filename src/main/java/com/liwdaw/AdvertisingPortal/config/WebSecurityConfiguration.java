@@ -3,6 +3,7 @@ package com.liwdaw.AdvertisingPortal.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter{
 
     @Bean
@@ -23,14 +25,23 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter{
     private PasswordEncoder passwordEncoder;
     
     private static final String[] AUTH_WHITELIST = {
+            "/index.html",
+            "/settings.html",
+            "/admin.html",
+            "/ad.html",
+            "/sign_in.html",
+            "/register.html",
+            "/terms_and_conditions.html",
+            "/about.html",
+            "/add_ad.html",
+            "/theme.css",
+            "/theme.scss",
+            "/images/**",
             "/swagger-resources/**",
             "/swagger-ui.html",
             "/v2/api-docs",
             "/webjars/**",
             "/user/register",
-            "/user/login/",
-            "/user/name*",
-            "/user/id*",
             "/ad/ad_id*",
             "/ad/subcategory_id*",
             "/ad/category_id*",
@@ -38,7 +49,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter{
     };
     
     @Autowired
-    CustomUserDetailsService detailsService;
+    private CustomUserDetailsService detailsService;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {

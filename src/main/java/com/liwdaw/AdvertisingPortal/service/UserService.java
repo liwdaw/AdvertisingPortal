@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,15 +24,16 @@ public class UserService {
     private PasswordEncoder passwordEncoder;
     
     @Autowired
-    private UserRepository repository;
+    private UserRepository userRepository;
     
-    public UserDTO getUserById(int id) {
-        UserDTO user = new UserDTO(repository.findById(id));
+    public UserDTO getAuthenticatedUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDTO user = new UserDTO(userRepository.findByEmail(authentication.getName()));
         return user;
     }
     
     public UserDTO getUserByEmailAndPassword(String email, String password) {
-        User user = repository.findByEmail(email);
+        User user = userRepository.findByEmail(email);
         if (passwordEncoder.matches(password, user.getPassword())) {
             return new UserDTO(user);
         }
@@ -41,7 +44,7 @@ public class UserService {
     
     public List<UserDTO> getUsersByNameContaining(String name) {
         List<UserDTO> users = new ArrayList<>();
-        repository.findByNameContainingIgnoreCase(name).forEach(e -> users.add(new UserDTO(e)));
+        userRepository.findByNameContainingIgnoreCase(name).forEach(e -> users.add(new UserDTO(e)));
         return users;
     }
     
@@ -54,7 +57,7 @@ public class UserService {
         user.setPhoneNumber(userRequest.getPhoneNumber());
         user.setRole(UserRole.USER);
         user.setEnabled(true);
-        repository.save(user);
+        userRepository.save(user);
     }
     
 }

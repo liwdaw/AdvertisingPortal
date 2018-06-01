@@ -10,12 +10,19 @@ import com.liwdaw.AdvertisingPortal.model.AdvertisementStatus;
 public interface AdvertisementRepository extends JpaRepository<Advertisement, Integer> {
 
     public Advertisement findByIdAndStatus(int id, AdvertisementStatus status);
-    
-    public List<Advertisement> findByUserIdAndStatus(int id, AdvertisementStatus status);
        
     public List<Advertisement> findBySubCategoryIdAndStatus(int id, AdvertisementStatus status);
     
     public List<Advertisement> findBySubCategoryCategoryIdAndStatus(int id, AdvertisementStatus status);
     
     public List<Advertisement> findByStatus(AdvertisementStatus status);
+    
+    public List<Advertisement> findByUserEmail(String email);
+    
+    public List<Advertisement> findBySubCategoryCategoryIdAndStatusAndTitleContainingIgnoreCase(int id, AdvertisementStatus status, String search);
+    
+    public List<Advertisement> findBySubCategoryIdAndStatusAndTitleContainingIgnoreCase(int id, AdvertisementStatus status, String search);
+    
+    public List<Advertisement> findByStatusAndTitleContainingIgnoreCase(AdvertisementStatus status, String search);
+    
 }

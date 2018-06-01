@@ -24,7 +24,7 @@ public class AdvertisementDTO {
     
     private Date refreshDate;
     
-    private List<ImageDTO> images = new ArrayList<>();
+    private List<String> images = new ArrayList<>();
     
     private UserDTO user;
     
@@ -35,7 +35,7 @@ public class AdvertisementDTO {
         price = advertisement.getPrice();
         addDate = advertisement.getAddDate();
         refreshDate = advertisement.getRefreshDate();
-        images.forEach(e -> this.images.add(new ImageDTO(e)));
+        images.forEach(e -> this.images.add(e.getImage()));
         user = new UserDTO(advertisement.getUser());
     }
     

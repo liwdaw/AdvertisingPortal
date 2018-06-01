@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,18 +25,14 @@ public class UserController {
     @Autowired
     private UserService service;
     
-    @GetMapping("/id={id}")
-    public ResponseEntity<UserDTO> getUserById(@PathVariable("id") Integer id) {
-        UserDTO user = service.getUserById(id);
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    @GetMapping("/me")
+    public ResponseEntity<UserDTO> getAuthenticatedUser() {
+        UserDTO user = service.getAuthenticatedUser();
         return new ResponseEntity<UserDTO>(user, HttpStatus.OK);
     }
     
-    @GetMapping("/name={name}")
-    public ResponseEntity<List<UserDTO>> getUsersByNameContaining(@PathVariable("name") String name) {
-        List<UserDTO> users = service.getUsersByNameContaining(name);
-        return new ResponseEntity<List<UserDTO>>(users, HttpStatus.OK);
-    }
-    
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @PostMapping("/login")
     public ResponseEntity<UserDTO> loginUser(@RequestBody LoginRequest loginRequest) {
         UserDTO user = service.getUserByEmailAndPassword(loginRequest.getEmail(), loginRequest.getPassword());

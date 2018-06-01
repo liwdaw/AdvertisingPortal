@@ -29,7 +29,7 @@ CREATE TABLE `advertisement` (
 
 CREATE TABLE `image` (
 	`image_id` int NOT NULL AUTO_INCREMENT,
-	`path` varchar(255) NOT NULL,
+	`image` MEDIUMTEXT NOT NULL,
 	`advertisement_id` int NOT NULL,
 	PRIMARY KEY (`image_id`)
 );
