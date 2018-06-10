@@ -31,6 +31,12 @@ public class AdvertisementController {
         return new ResponseEntity<List<AdvertisementDTO>>(advertisementsDTO, HttpStatus.OK);
     }
     
+    @GetMapping("/new_id={id}")
+    public ResponseEntity<AdvertisementDTO> getNewAdvertisementById(@PathVariable("id") Integer id) {
+        AdvertisementDTO advertisementDTO = advertisementService.getNewAdvertisementById(id);
+        return new ResponseEntity<AdvertisementDTO>(advertisementDTO, HttpStatus.OK);
+    }
+    
     @GetMapping("/ad_id={id}")
     public ResponseEntity<AdvertisementDTO> getAdvertisementById(@PathVariable("id") Integer id) {
         AdvertisementDTO advertisementDTO = advertisementService.getAdvertisementById(id);
@@ -43,7 +49,7 @@ public class AdvertisementController {
         return new ResponseEntity<List<AdvertisementDTO>>(advertisementsDTO, HttpStatus.OK);
     }
     
-    @GetMapping("/subcategory_id={id}&search={search}")
+    @GetMapping("/subcategory_id={id}/search={search}")
     public ResponseEntity<List<AdvertisementDTO>> getAdvertisementsBySubCategoryIdAndSearch(@PathVariable("id") Integer id, @PathVariable("search") String search) {
         List<AdvertisementDTO> advertisementsDTO = advertisementService.getAdvertisementsBySubCategoryIdAndSearch(id, search);
         return new ResponseEntity<List<AdvertisementDTO>>(advertisementsDTO, HttpStatus.OK);
@@ -55,7 +61,7 @@ public class AdvertisementController {
         return new ResponseEntity<List<AdvertisementDTO>>(advertisementsDTO, HttpStatus.OK);
     }
     
-    @GetMapping("/category_id={id}&search={search}")
+    @GetMapping("/category_id={id}/search={search}")
     public ResponseEntity<List<AdvertisementDTO>> getAdvertisementsByCategoryIdAndSearch(@PathVariable("id") Integer id, @PathVariable("search") String search) {
         List<AdvertisementDTO> advertisementsDTO = advertisementService.getAdvertisementsByCategoryIdAndSearch(id, search);
         return new ResponseEntity<List<AdvertisementDTO>>(advertisementsDTO, HttpStatus.OK);
@@ -64,6 +70,12 @@ public class AdvertisementController {
     @GetMapping("/search={search}")
     public ResponseEntity<List<AdvertisementDTO>> getAdvertisementsBySearch(@PathVariable("search") String search) {
         List<AdvertisementDTO> advertisementsDTO = advertisementService.getAdvertisementsBySearch(search);
+        return new ResponseEntity<List<AdvertisementDTO>>(advertisementsDTO, HttpStatus.OK);
+    }
+    
+    @GetMapping("/all")
+    public ResponseEntity<List<AdvertisementDTO>> getAllAdvertisements() {
+        List<AdvertisementDTO> advertisementsDTO = advertisementService.getAllAdvertisements();
         return new ResponseEntity<List<AdvertisementDTO>>(advertisementsDTO, HttpStatus.OK);
     }
     

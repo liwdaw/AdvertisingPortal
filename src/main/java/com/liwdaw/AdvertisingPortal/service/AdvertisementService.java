@@ -38,7 +38,10 @@ public class AdvertisementService {
     private UserRepository userRepository;
 
     public AdvertisementDTO getAdvertisementById(int id) {
-        Advertisement advertisement = advertisementRepository.findByIdAndStatus(id, AdvertisementStatus.NEW);
+        Advertisement advertisement = advertisementRepository.findByIdAndStatus(id, AdvertisementStatus.CONFIRMED);
+        if (advertisement == null) {
+            advertisement = advertisementRepository.findByIdAndStatus(id, AdvertisementStatus.FINISHED);
+        }
         List<Image> images = imageRepository.findByAdvertisementId(advertisement.getId());
         System.out.println(advertisement.getId());
         System.out.println(images.size());
@@ -50,6 +53,16 @@ public class AdvertisementService {
         List<AdvertisementDTO> advertisementsDTO = new ArrayList<>();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         List<Advertisement> advertisements = advertisementRepository.findByUserEmail(authentication.getName());
+        advertisements.forEach(e -> {
+            List<Image> images = imageRepository.findByAdvertisementId(e.getId());
+            advertisementsDTO.add(new AdvertisementDTO(e, images));
+        });
+        return advertisementsDTO;
+    }
+    
+    public List<AdvertisementDTO> getAllAdvertisements() {
+        List<AdvertisementDTO> advertisementsDTO = new ArrayList<>();
+        List<Advertisement> advertisements = advertisementRepository.findByStatus(AdvertisementStatus.CONFIRMED);
         advertisements.forEach(e -> {
             List<Image> images = imageRepository.findByAdvertisementId(e.getId());
             advertisementsDTO.add(new AdvertisementDTO(e, images));
@@ -115,6 +128,13 @@ public class AdvertisementService {
             advertisementsDTO.add(new AdvertisementDTO(e, images));
         });
         return advertisementsDTO;
+    }
+    
+    public AdvertisementDTO getNewAdvertisementById(int id) {
+        Advertisement advertisement = advertisementRepository.findByIdAndStatus(id, AdvertisementStatus.NEW);
+        List<Image> images = imageRepository.findByAdvertisementId(advertisement.getId());
+        AdvertisementDTO advertisementDTO = new AdvertisementDTO(advertisement, images);
+        return advertisementDTO;
     }
     
     public void addAdvertisement(AdvertisementRequest advertisementRequest) {

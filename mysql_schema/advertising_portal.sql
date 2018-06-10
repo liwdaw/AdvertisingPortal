@@ -122,3 +122,5 @@ INSERT INTO sub_category (name, category_id) VALUES ("Board games", 8);
 INSERT INTO sub_category (name, category_id) VALUES ("Strollers", 8);
 INSERT INTO sub_category (name, category_id) VALUES ("Seats & Carriers", 8);
 INSERT INTO sub_category (name, category_id) VALUES ("Other", 8);
+
+INSERT INTO user VALUES (1, 'admin@adworld.com', '$2a$10$LVaWtfp.0Sd4zowvpHPWhONFHSKULQjAOCvFv5l2ND1Ah6vOTe/Ha', 'Admin', 'New York', '123456789', 'ADMIN', 1);

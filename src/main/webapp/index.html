@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" type="text/css">
+  <link rel="stylesheet" href="theme.css" type="text/css">
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+  <script src="scripts/api.js"></script>
+  <script src="scripts/parameters.js"></script>
+  <script src="scripts/cookies.js"></script>
+</head>
+
+<script>
+		
+	var page = 1;
+	var adsPerPage = 5;
+	var ads;
+	var selectedSubCategory = 0;
+	var selectedCategory = 0;
+	var subCategories = [ 
+		["Computers", "Laptops & Notebooks", "Tablets", "Mobile phones", "Consoles", "Games", "AGD devices", "Audio devices", "Photography", "TVs", "Other"],
+		["Cars", "Motorcycles & Scooters", "Vans & Trucks", "Trailers", "Parts & Tires", "Car audio", "Other"],
+		["Flats", "Houses", "Plots", "Offices", "Warehouses", "Other"],
+		["Clothes", "Boots", "Underwear", "Accesories", "Cosmetics", "Watches", "Jewellery", "Other"],
+		["Furnitures", "Tools", "Building materials", "Other"],
+		["Bikes", "Skis & Snowboard", "Fitness", "Fishing", "Other"],
+		["Instruments", "Discs", "Books", "School articles", "Other"],
+		["Toys", "Board games", "Strollers", "Seats & Carriers", "Other"]
+	];
+		
+	$(function(){
+		initializeHtmlElements();
+		loadAds();
+	});
+	
+	function initializeHtmlElements() {
+		$('#registerAlert').hide();
+		$('#loginAlert').hide();
+		if (isTokenExists()) {
+			$('#registerMenu').hide();
+			$('#loginMenu').hide();
+			var role = getRole();
+			if (role == "USER") {
+				$('#adminButton').hide();
+			}
+		}
+		else {
+			$('#logoutButton').hide();
+			$('#adminButton').hide();
+			$('#settingsButton').hide();
+		}
+		$('#selectCategory').on('change', function() {
+			selectedCategory = this.value-1;
+			if (selectedCategory >= 0) {
+				$('#selectSubCategory').empty();
+				$('#selectSubCategory').append($('<option selected="" value="0">Select subcategory</option>'));
+				var index = 0;
+				for(var i=0; i<selectedCategory; i++) {
+					for(var j=0; j<subCategories[i].length; j++) {
+						index++
+					}
+				}
+				for(var i=0; i<subCategories[selectedCategory].length; i++) {
+					var index = index+1;
+					$('#selectSubCategory').append($('<option value="'+index+'">'+subCategories[selectedCategory][i]+'</option>'));
+				}
+				$('#selectSubCategory').prop('disabled', false);
+				selectedCategory++;
+			}
+			else {
+				$('#selectSubCategory').empty();
+				$('#selectSubCategory').append($('<option selected="" value="0">Select subcategory</option>'));
+				$('#selectSubCategory').prop('disabled', true);
+			}
+		});
+		$('#selectSubCategory').on('change', function() {
+			selectedSubCategory = this.value;
+		});
+		
+	}
+	
+	function loadAds() {
+		var result;
+		var response;
+		if (result = getParameter("subcategory_id")) {
+			var subcategory = result;
+			if (result = getParameter("search")) {
+				var search = result;
+				$("#searchInput").val(search);
+				loadAdsRequest("/ad/subcategory_id="+subcategory+"/search="+search);
+			}
+			else {	
+				loadAdsRequest("/ad/subcategory_id="+subcategory);			
+			}
+		}
+		else if (result = getParameter("category_id")) {
+			var category = result;
+			if (result = getParameter("search")) {
+				var search = result;
+				$("#searchInput").val(search);			
+				var response = loadAdsRequest("/ad/category_id="+category+"/search="+search);
+			}
+			else {	
+				loadAdsRequest("/ad/category_id="+category);			
+			}
+		}
+		else if (result = getParameter("search")) {
+			var search = result;
+			$("#searchInput").val(search);	
+			loadAdsRequest("/ad/search="+search);
+		}
+		else {	
+			loadAdsRequest("/ad/all");
+		}
+	}
+	
+	
+	function formatDate(date) {
+		var formattedDate = new Date(date);
+		var day = formattedDate.getDate();
+		var month = formattedDate.getMonth()+1;
+		var year = formattedDate.getFullYear();
+		var hours = formattedDate.getHours();
+		var minutes = formattedDate.getMinutes();
+		var seconds = formattedDate.getSeconds();
+		if (day < 10) {
+			day = "0"+day;
+		}
+		if (month < 10) {
+			month = "0"+month;
+		}
+		if (seconds < 10) {
+			seconds = "0"+seconds;
+		}
+		if (minutes < 10) {
+			minutes = "0"+minutes;
+		}
+		if (hours < 10) {
+			hours = "0"+hours;
+		}
+		return day+"-"+month+"-"+year+" "+hours+":"+minutes+":"+seconds;
+	}
+	
+	function loadAdsRequest(subPath) {
+		var request = new XMLHttpRequest();
+		var path = apiPath+subPath;
+		request.onreadystatechange = state_change;
+		request.open("GET", path, true);
+		request.setRequestHeader("Content-Type", "application/json");
+		request.send();
+		function state_change() {
+			if (request.readyState == 4) {
+				if (request.status == 200) {
+					var response = JSON.parse(request.responseText);
+					if (response != null) {
+						for (var i=0; i<response.length & i<adsPerPage; i++) {
+							if (response[i].images == null || response[i].images.length == 0) {
+								$("#adsCardBody").append($('<div class="row my-3" id="'+response[i].id+'"><div class="col-md-4"><img src="images/no_photo.png" style="display:block; width:100%; height:100%; max-height:180"></div><div class="col-md-8 "><div class="card"><div class="card-header">'+response[i].title+'<br> </div><div class="card-body"><ul class="list-inline"><li class="list-inline-item w-50">'+response[i].user.city+'</li><li class="list-inline-item text-right bg-primary p-1">'+response[i].price+' $</li></ul><p>'+formatDate(response[i].addDate)+'</p></div></div></div></div>'));							
+							}
+							else {
+								$("#adsCardBody").append($('<div class="row my-3" id="'+response[i].id+'"><div class="col-md-4"><img src="'+response[i].images[0]+'" style="display:block; width:100%; height:100%; max-height:180"></div><div class="col-md-8 "><div class="card"><div class="card-header">'+response[i].title+'<br> </div><div class="card-body"><ul class="list-inline"><li class="list-inline-item w-50">'+response[i].user.city+'</li><li class="list-inline-item text-right bg-primary p-1">'+response[i].price+' $</li></ul><p>'+formatDate(response[i].addDate)+'</p></div></div></div></div>'));
+							}
+							var ad = document.getElementById(response[i].id);
+							ad.style.cursor = "pointer";
+							ad.onclick = function() {
+								window.location.href = "ad.html?id="+this.id;
+							};
+						}
+						if (response.length > page*adsPerPage) {
+							$("#nextPageButton").removeClass("disabled");
+						}
+						ads = response;
+					}
+				}
+				else {
+					window.location.href = "error.html";
+				}
+			}
+		}	
+	}
+	
+	function search() {
+		var searchText = document.getElementById('searchInput').value;
+		if (selectedSubCategory == 0) {
+			if (selectedCategory == 0) {
+				window.location.href = "index.html?search="+searchText;
+			}
+			else {
+				window.location.href = "index.html?category_id="+selectedCategory+"&search="+searchText;
+			}
+		}
+		else {
+			window.location.href = "index.html?subcategory_id="+selectedSubCategory+"&search="+searchText;
+		}
+	}
+	
+	function nextPage() {	
+		page++;
+		$("#adsCardBody").empty();
+		if (ads.length <= page*adsPerPage) {
+			$("#nextPageButton").addClass("disabled");
+		}
+		$("#previousPageButton").removeClass("disabled");
+		$("#pageText").text(page);
+		for (var i=adsPerPage*(page-1); i<ads.length & i<adsPerPage*page; i++) {
+			if (ads[i].images == null || ads[i].images.length == 0) {
+				$("#adsCardBody").append($('<div class="row my-3" id="'+i+'"><div class="col-md-4"><img src="images/no_photo.png" style="display:block; width:100%; height:100%; max-height:180"></div><div class="col-md-8 "><div class="card"><div class="card-header">'+ads[i].title+'<br> </div><div class="card-body"><ul class="list-inline"><li class="list-inline-item w-50">'+ads[i].user.city+'</li><li class="list-inline-item text-right bg-primary p-1">'+ads[i].price+' $</li></ul><p>'+formatDate(ads[i].addDate)+'</p></div></div></div></div>'));			
+			}
+			else {
+				$("#adsCardBody").append($('<div class="row my-3" id="'+i+'"><div class="col-md-4"><img src="'+ads[i].images[0]+'" style="display:block; width:100%; height:100%; max-height:180"></div><div class="col-md-8 "><div class="card"><div class="card-header">'+ads[i].title+'<br> </div><div class="card-body"><ul class="list-inline"><li class="list-inline-item w-50">'+ads[i].user.city+'</li><li class="list-inline-item text-right bg-primary p-1">'+ads[i].price+' $</li></ul><p>'+formatDate(ads[i].addDate)+'</p></div></div></div></div>'));
+			}
+			var ad = document.getElementById(i);
+			ad.style.cursor = "pointer";
+			ad.onclick = function() {
+				window.location.href = "ad.html?id="+this.id;
+			};
+		}
+	}
+	
+	function previousPage() {
+		page--;
+		$("#adsCardBody").empty();
+		if (page == 1) {
+			$("#previousPageButton").addClass("disabled");
+		}
+		$("#nextPageButton").removeClass("disabled");
+		$("#pageText").text(page);
+		for (var i=adsPerPage*(page-1); i<ads.length & i<adsPerPage*page; i++) {
+			if (ads[i].images == null || ads[i].images.length == 0) {
+				$("#adsCardBody").append($('<div class="row my-3" id="'+i+'"><div class="col-md-4"><img src="images/no_photo.png" style="display:block; width:100%; height:100%; max-height:180"></div><div class="col-md-8 "><div class="card"><div class="card-header">'+ads[i].title+'<br> </div><div class="card-body"><ul class="list-inline"><li class="list-inline-item w-50">'+ads[i].user.city+'</li><li class="list-inline-item text-right bg-primary p-1">'+ads[i].price+' $</li></ul><p>'+formatDate(ads[i].addDate)+'</p></div></div></div></div>'));			
+			}
+			else {
+				$("#adsCardBody").append($('<div class="row my-3" id="'+i+'"><div class="col-md-4"><img src="'+ads[i].images[0]+'" style="display:block; width:100%; height:100%; max-height:180"></div><div class="col-md-8 "><div class="card"><div class="card-header">'+ads[i].title+'<br> </div><div class="card-body"><ul class="list-inline"><li class="list-inline-item w-50">'+ads[i].user.city+'</li><li class="list-inline-item text-right bg-primary p-1">'+ads[i].price+' $</li></ul><p>'+formatDate(ads[i].addDate)+'</p></div></div></div></div>'));
+			}
+			var ad = document.getElementById(i);
+			ad.style.cursor = "pointer";
+			ad.onclick = function() {
+				window.location.href = "ad.html?id="+this.id;
+			};
+		}
+	}
+	
+	function register() {
+		var email = document.getElementById('registerEmailInput').value;
+		var password = document.getElementById('registerPasswordInput').value;
+		var name = document.getElementById('registerNameInput').value;
+		var city = document.getElementById('registerCityInput').value;
+		var phoneNumber = document.getElementById('registerPhoneInput').value;
+		registerRequest(name, city, phoneNumber, email, password);
+	}
+	
+	function registerRequest(name, city, phoneNumber, email, password) {
+		$('#registerAlert').hide();
+		var requestBody = {
+			'name': name,
+			'city': city,
+			'phoneNumber': phoneNumber,
+			'email': email,
+			'password': password					
+		}
+		var request = new XMLHttpRequest();
+		var path = apiPath+"/user/register";
+		request.onreadystatechange = state_change;
+		request.open("POST", path, false);
+		request.setRequestHeader("Content-Type", "application/json");
+		request.send(JSON.stringify(requestBody));
+		function state_change() {
+			if (request.readyState == 4) {
+				if (request.status == 201) {
+					loginRequest(email, password);
+				}
+				else if (request.status == 409) {
+					$('#registerEmailInput').val("");
+					$('#registerPasswordInput').val("");
+					$('#registerAlert').show();
+				}
+				else {
+					window.location.href = "error.html";
+				}
+			}
+		}
+	}
+	
+	function login() {
+		var email = document.getElementById('loginEmailInput').value;
+		var password = document.getElementById('loginPasswordInput').value;
+		loginRequest(email, password);
+	}
+	
+	function loginRequest(email, password) {
+		$('#loginAlert').hide();
+		var requestBody = {
+			'email': email,
+			'password': password					
+		}
+		var request = new XMLHttpRequest();
+		var path = apiPath+"/user/login";
+		request.onreadystatechange = state_change;
+		request.open("POST", path, false);
+		request.setRequestHeader("Content-Type", "application/json");
+		request.setRequestHeader("Authorization", "Basic "+btoa(email+":"+password));
+		request.send(JSON.stringify(requestBody));
+		function state_change() {
+			if (request.readyState == 4) {
+				if (request.status == 200) {
+					var response = JSON.parse(request.responseText);
+					saveToken(btoa(email+":"+password));
+					saveRole(response.role);
+					savePhoneNumber(response.phoneNumber);
+					saveEmail(response.email);
+					saveCity(response.city);
+					window.location.href = "index.html";
+				}
+				else if (request.status == 401) {
+					$('#loginEmailInput').val("");
+					$('#loginPasswordInput').val("");
+					$('#loginAlert').show();
+				}
+				else {
+					window.location.href = "error.html";
+				}
+			}
+		}	
+	}
+	
+	function logout() {
+		clearCookies();
+		window.location.href = "index.html";
+	}
+	
+
+</script>
+
+<body>
+  <nav class="navbar navbar-expand-md bg-primary navbar-dark">
+    <div class="container">
+      <a class="navbar-brand text-white" href="index.html">
+        <img src="images/logo.png" width="30" height="30" class="d-inline-block align-top" alt="">&nbsp;AD World</a>
+      <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbar2SupportedContent">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse text-center justify-content-end" id="navbar2SupportedContent">
+        <ul class="navbar-nav">
+          <li class="btn navbar-btn mx-5 text-white btn-secondary dropdown">
+            <a class="nav-link dropdown-toggle text-white" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+              <img src="images/flag_icon_eng.png" class="d-inline-block align-top" alt="">&nbsp;ENG</a>
+            <div class="dropdown-menu">
+              <a class="dropdown-item" href="index.html">
+                <img src="images/flag_icon_eng.png" class="d-inline-block align-top" alt="">&nbsp;ENG</a>
+              <a class="dropdown-item" href="pl/index.html">
+                <img src="images/flag_icon_pol.png" class="d-inline-block align-top" alt="">&nbsp;PL</a>
+            </div>
+          </li>
+          <li class="btn navbar-btn ml-2 text-white btn-secondary py-2" id="adminButton">
+            <a class="text-white" href="admin.html" style="text-decoration: none;">
+              <i class="fa d-inline fa-lg fa-cogs"></i> ADMIN</a>
+          </li>
+          <li class="btn navbar-btn ml-2 text-white btn-secondary py-2" id="settingsButton">
+            <a class="text-white" href="add_ad.html" style="text-decoration: none;">
+              <i class="fa d-inline fa-lg fa-wrench"></i> Add ad</a>
+          </li>
+          <li class="btn navbar-btn ml-2 text-white btn-secondary dropdown" id="registerMenu">
+            <a class="nav-link dropdown-toggle text-white py-1" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+              <i class="fa d-inline fa-lg fa-user-plus"></i> Register</a>
+            <div class="dropdown-menu" style="padding:15px 25px; width:300px;">
+              <form class="">
+                <div class="form-group">
+                  <label>Name</label>
+                  <input type="text" class="form-control" placeholder="Name" id="registerNameInput" required> </div>
+                <div class="form-group">
+                  <label>City</label>
+                  <input type="text" class="form-control" placeholder="City" id="registerCityInput" required> </div>
+                <div class="form-group">
+                  <label>Phone number</label>
+                  <input type="text" class="form-control" placeholder="Phone number" id="registerPhoneInput" required> </div>
+                <div class="form-group">
+                  <label>Email</label>
+                  <input type="email" class="form-control" placeholder="Email" id="registerEmailInput" required> </div>
+                <div class="form-group">
+                  <label>Password</label>
+                  <input type="password" class="form-control" placeholder="Password" id="registerPasswordInput" required> </div>
+                <button type="submit" class="btn btn-primary" id="registerButton" onclick="register()">Register account</button>
+              </form>
+            </div>
+          </li>
+          <li class="btn navbar-btn ml-2 text-white btn-secondary dropdown" id="loginMenu">
+            <a class="nav-link dropdown-toggle text-white py-1" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+              <i class="fa d-inline fa-lg fa-user"></i> Sign in</a>
+            <div class="dropdown-menu" style="padding:15px 25px; width:300px;">
+              <form class="">
+                <div class="form-group">
+                  <label>Email address</label>
+                  <input type="email" class="form-control" placeholder="Enter email" id="loginEmailInput" required> </div>
+                <div class="form-group">
+                  <label>Password</label>
+                  <input type="password" class="form-control" placeholder="Password" id="loginPasswordInput" required> </div>
+                <button type="submit" class="btn btn-primary" id="loginButton" onclick="login()">Sign in</button>
+              </form>
+            </div>
+          </li>
+          <li class="btn navbar-btn ml-2 text-white btn-secondary py-2" id="logoutButton" onclick="logout()">
+            <i class="fa d-inline fa-lg fa-user-o"></i> Sign out</li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <div class="py-5 bg-light">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-3 bg-primary">
+          <img class="img-fluid d-block mx-auto" src="images/logo.png" width="80%"> </div>
+        <div class="col-md-9 bg-primary">
+          <form class="form-inline" action="">
+            <div class="input-group input-group-lg w-100 my-2">
+              <input type="text" class="form-control form-control-lg" placeholder="What are you looking for?" id="searchInput" required>
+              <div class="input-group-append">
+                <button class="btn btn-secondary" type="button" id="searchButton" onclick="search()">Search</button>
+              </div>
+            </div>
+            <div class="col-md-5">
+              <select class="custom-control custom-select w-100" id="selectCategory">
+                <option selected="" value="0">Select category</option>
+                <option value="1">Electronics</option>
+                <option value="2">Automotive</option>
+                <option value="3">Real estate</option>
+                <option value="4">Fashion</option>
+                <option value="5">House &amp; Garden</option>
+                <option value="6">Sport &amp; Hobby</option>
+                <option value="7">Music &amp; Education</option>
+                <option value="8">For kids</option>
+              </select>
+            </div>
+            <div class="col-md-5">
+              <select class="custom-control custom-select w-100 my-3" id="selectSubCategory" disabled="">
+                <option selected="" value="0">Select subcategory</option>
+              </select>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="container my-3">
+      <div class="row">
+        <div class="col-md-3">
+          <div class="card">
+            <div class="card-header bg-primary">Categories</div>
+            <div class="card-body">
+              <ul class="nav nav-pills flex-column">
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Electronics</a>
+                  <div class="dropdown-menu">
+                    <a class="dropdown-item" href="index.html?subcategory_id=1">Computers</a>
+                    <a class="dropdown-item" href="index.html?subcategory_id=2">Laptops &amp; Notebooks</a>
+                    <a class="dropdown-item" href="index.html?subcategory_id=3">Tablets</a>
+                    <a class="dropdown-item" href="index.html?subcategory_id=4">Mobile phones</a>
+                    <a class="dropdown-item" href="index.html?subcategory_id=5">Consoles</a>
+                    <a class="dropdown-item" href="index.html?subcategory_id=6">Games</a>
+                    <a class="dropdown-item" href="index.html?subcategory_id=7">AGD devices</a>
+                    <a class="dropdown-item" href="index.html?subcategory_id=8">Audio devices</a>
+                    <a class="dropdown-item" href="index.html?subcategory_id=9">Photography</a>
+                    <a class="dropdown-item" href="index.html?subcategory_id=10">TVs</a>
+                    <a class="dropdown-item" href="index.html?subcategory_id=11">Other</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="index.html?category_id=1">Electronics</a>
+                  </div>
+                </li>
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Automotive</a>
+                  <div class="dropdown-menu">
+                    <a class="dropdown-item" href="index.html?subcategory_id=12">Cars</a>
+                    <a class="dropdown-item" href="index.html?subcategory_id=13">Motorcycles &amp; Scooters</a>
+                    <a class="dropdown-item" href="index.html?subcategory_id=14">Vans &amp; Trucks</a>
+                    <a class="dropdown-item" href="index.html?subcategory_id=15">Trailers</a>
+                    <a class="dropdown-item" href="index.html?subcategory_id=16">Parts &amp; Tires</a>
+                    <a class="dropdown-item" href="index.html?subcategory_id=17">Car audio</a>
+                    <a class="dropdown-item" href="index.html?subcategory_id=18">Other</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="index.html?category_id=2">Automotive</a>
+                  </div>
+                </li>
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Real estate</a>
+                  <div class="dropdown-menu">
+                    <a class="dropdown-item" href="index.html?subcategory_id=19">Flats</a>
+                    <a class="dropdown-item" href="index.html?subcategory_id=20">Houses</a>
+                    <a class="dropdown-item" href="index.html?subcategory_id=21">Plots</a>
+                    <a class="dropdown-item" href="index.html?subcategory_id=22">Offices</a>
+                    <a class="dropdown-item" href="index.html?subcategory_id=23">Warehouses</a>
+                    <a class="dropdown-item" href="index.html?subcategory_id=24">Other</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="index.html?category_id=3">Real estate</a>
+                  </div>
+                </li>
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Fasion</a>
+                  <div class="dropdown-menu">
+                    <a class="dropdown-item" href="index.html?subcategory_id=25">Clothes</a>
+                    <a class="dropdown-item" href="index.html?subcategory_id=26">Boots</a>
+                    <a class="dropdown-item" href="index.html?subcategory_id=27">Underwear</a>
+                    <a class="dropdown-item" href="index.html?subcategory_id=28">Accesories</a>
+                    <a class="dropdown-item" href="index.html?subcategory_id=29">Cosmetics</a>
+                    <a class="dropdown-item" href="index.html?subcategory_id=30">Watches</a>
+                    <a class="dropdown-item" href="index.html?subcategory_id=31">Jewellery</a>
+                    <a class="dropdown-item" href="index.html?subcategory_id=32">Other</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="index.html?category_id=4">Fasion</a>
+                  </div>
+                </li>
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">House &amp; Garden</a>
+                  <div class="dropdown-menu">
+                    <a class="dropdown-item" href="index.html?subcategory_id=33">Furnitures</a>
+                    <a class="dropdown-item" href="index.html?subcategory_id=34">Tools</a>
+                    <a class="dropdown-item" href="index.html?subcategory_id=35">Building materials</a>
+                    <a class="dropdown-item" href="index.html?subcategory_id=36">Other</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="index.html?category_id=5">House &amp; Garden</a>
+                  </div>
+                </li>
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Sport &amp; Hobby</a>
+                  <div class="dropdown-menu">
+                    <a class="dropdown-item" href="index.html?subcategory_id=37">Bikes</a>
+                    <a class="dropdown-item" href="index.html?subcategory_id=38">Skis &amp; Snowboard</a>
+                    <a class="dropdown-item" href="index.html?subcategory_id=39">Fitness</a>
+                    <a class="dropdown-item" href="index.html?subcategory_id=40">Fishing</a>
+                    <a class="dropdown-item" href="index.html?subcategory_id=41">Other</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="index.html?category_id=6">Sport &amp; Hobby</a>
+                  </div>
+                </li>
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Music &amp; Education</a>
+                  <div class="dropdown-menu">
+                    <a class="dropdown-item" href="index.html?subcategory_id=42">Instruments</a>
+                    <a class="dropdown-item" href="index.html?subcategory_id=43">Discs</a>
+                    <a class="dropdown-item" href="index.html?subcategory_id=44">Books</a>
+                    <a class="dropdown-item" href="index.html?subcategory_id=45">School articles</a>
+                    <a class="dropdown-item" href="index.html?subcategory_id=46">Other</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="index.html?category_id=7">Music &amp; Education</a>
+                  </div>
+                </li>
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">For kids</a>
+                  <div class="dropdown-menu">
+                    <a class="dropdown-item" href="index.html?subcategory_id=47">Toys</a>
+                    <a class="dropdown-item" href="index.html?subcategory_id=48">Board games</a>
+                    <a class="dropdown-item" href="index.html?subcategory_id=49">Strollers</a>
+                    <a class="dropdown-item" href="index.html?subcategory_id=50">Seats &amp; Carriers</a>
+                    <a class="dropdown-item" href="index.html?subcategory_id=51">Other</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="index.html?category_id=9">For kids</a>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-9">
+          <div class="card">
+            <div class="card-header bg-primary" id="adsTypeText">Search result</div>
+            <div class="card-body" id="adsCardBody">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row my-2">
+        <div class="col-md-12">
+          <div class="row">
+            <div class="col-md-6 offset-md-6">
+              <div class="btn-group">
+                <a href="#" class="btn btn-outline-primary disabled" id="previousPageButton" onclick="previousPage()">&lt;-</a>
+                <a class="btn btn-outline disabled" id="pageText">1</a>
+                <a href="#" class="btn btn-outline-primary disabled" id="nextPageButton" onclick="nextPage()">-&gt;</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="text-white bg-primary">
+    <div class="container">
+      <div class="row">
+        <div class="p-4 col-md-4">
+          <h2 class="mb-4">Links</h2>
+          <ul class="list-unstyled">
+            <a href="terms_and_conditions.html" class="text-white">Terms &amp; Conditions</a>
+            <br>
+            <a href="about.html" class="text-white">About us</a>
+            <br>
+            <br> </ul>
+        </div>
+        <div class="p-4 col-md-4">
+          <h2 class="mb-4">Contact</h2>
+          <p>
+            <a class="text-white">
+              <i class="fa d-inline mr-3 text-secondary fa-phone"></i>
+            </a>+42 630 27 18</p>
+          <p>
+            <a class="text-white">
+              <i class="fa d-inline mr-3 text-secondary fa-envelope-o"></i>
+            </a>contact_us@adworld.com</p>
+        </div>
+        <div class="p-4 col-md-4">
+          <h2 class="mb-4 text-light">Subscribe</h2>
+          <form>
+            <fieldset class="form-group text-white">
+              <label for="exampleInputEmail1">Get our newsletter</label>
+              <input type="email" class="form-control" placeholder="Enter email"> </fieldset>
+            <button type="submit" class="btn btn-secondary" disabled="">Submit</button>
+          </form>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12 mt-3">
+          <p class="text-center text-white">AD World</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>

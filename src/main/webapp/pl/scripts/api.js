@@ -1,0 +1,1 @@
+var apiPath = "http://localhost:8080";

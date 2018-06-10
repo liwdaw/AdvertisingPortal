@@ -34,18 +34,22 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter{
             "/terms_and_conditions.html",
             "/about.html",
             "/add_ad.html",
+            "/new_ad.html",
             "/theme.css",
             "/theme.scss",
             "/images/**",
+            "/scripts/**",  
             "/swagger-resources/**",
             "/swagger-ui.html",
             "/v2/api-docs",
             "/webjars/**",
             "/user/register",
             "/ad/ad_id*",
-            "/ad/subcategory_id*",
-            "/ad/category_id*",
-            "/ad/user_id*"
+            "/ad/subcategory_id**",
+            "/ad/category_id**",
+            "/ad/search**",
+            "/ad/all",
+            "/pl/**"
     };
     
     @Autowired
